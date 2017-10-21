@@ -6,6 +6,10 @@
   "author": "suzyng83209 <suzyn.one@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.2"
+    "@google-cloud/vision": "^0.12.0",
+    "axios": "^0.16.2",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "request": "^2.83.0"
   }
 }
