@@ -14,6 +14,7 @@ import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -40,6 +41,7 @@ class ProcessImageDetails {
         imageDetailsMap.put("lat", lat);
         imageDetailsMap.put("lon", lon);
 
+        this.bitmap = Bitmap.createScaledBitmap(this.bitmap, 720, 1080, false);
         try{
             new EncodeImage().execute(this.bitmap);
         }catch (OutOfMemoryError e){
@@ -71,12 +73,12 @@ class ProcessImageDetails {
         protected String doInBackground(Bitmap... bitmaps) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Bitmap btmap = bitmaps[0];
-            btmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+            btmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
             btmap.recycle();
 
             byte[] imageAsByteArray = baos.toByteArray();
-            encodedImage = Base64.encodeToString(imageAsByteArray, Base64.DEFAULT);
+            encodedImage = Base64.encodeToString(imageAsByteArray, Base64.NO_WRAP);
 
             return null;
         }
@@ -84,13 +86,17 @@ class ProcessImageDetails {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            imageDetailsMap.put("image", encodedImage);
+            imageDetailsMap.put("encoded_image", encodedImage);
 
             if (bitmap != null){
                 bitmap.recycle();
                 bitmap = null;
             }
-            SendPhotoToServer.sendPhoto(imageDetailsMap);
+            try {
+                SendPhotoToServer.sendPhoto(imageDetailsMap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
