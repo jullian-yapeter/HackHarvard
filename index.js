@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const gunDetection = require('./gunDetection');
+const smsService = require('./smsService');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -13,7 +14,9 @@ app.get('/', function(req, res) {
   res.send('Hello World!');
 });
 
-app.get('/annotate', gunDetection.getLabels);
+app.get('/text', smsService.textStatic);
+
+// app.get('/annotate', gunDetection.getLabels);
 
 app.listen(1337, function() {
   console.log('Example app listening on port 3000!');

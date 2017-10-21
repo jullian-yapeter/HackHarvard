@@ -1,0 +1,23 @@
+# Serverless definition file
+# --------------------------
+# Defines Lambda functions to be deployed to AWS using the Serverless Framework.
+# http://serverless.com
+
+service: gun-detection-services
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-west-2
+  memorySize: 128
+  timeout: 30
+functions:
+  gunDetect:
+    handler: lambdaHandlers.gunDetect
+    events:
+      - http:
+          path: detect
+          method: post
+          cors: 
+            origins:               
+              - '*'
