@@ -1,0 +1,21 @@
+{
+  "name": "gunDetectionLambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lambdaHandlers.js",
+  "scripts": {
+    "deploy": "serverless deploy --stage dev"
+  },
+  "author": {
+    "name": "Tyler Zhang",
+    "url": "https://github.com/tylerjxzhang/"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^1.19.0"
+  },
+  "dependencies": {
+    "firebase": "^4.6.0",
+    "axios": ""
+  }
+}
