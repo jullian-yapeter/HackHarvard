@@ -250,7 +250,7 @@ public class BasicCameraFragment extends Fragment
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-//            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage()));
         }
 
     };
@@ -945,6 +945,9 @@ public class BasicCameraFragment extends Fragment
             mImage = image;
 //            mFile = file;
         }
+        ImageSaver(Image image){
+            mImage = image;
+        }
 
         @Override
         public void run() {
@@ -970,7 +973,15 @@ public class BasicCameraFragment extends Fragment
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-
+//            Log.w("heyyyy", "YO");
+//
+//
+//            Bitmap bmm = BitmapFactory.decodeFile("/storage/emulated/0/Android/data/com.tash_had.android.surveillanceShotCamera/files/1508609370.jpg");
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bmm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            byte[] imageAsByteArray = baos.toByteArray();
+//            String encodedImage = Base64.encodeToString(imageAsByteArray, Base64.NO_WRAP);
+//            Log.w("BSAE64_TAAAAAAG", encodedImage);
 
 
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
@@ -981,12 +992,7 @@ public class BasicCameraFragment extends Fragment
             pid.bitmap = bitmap1;
             pid.setImageData();
 
-//            Bitmap bmm = BitmapFactory.decodeFile("/storage/emulated/0/Android/data/com.tash_had.android.surveillanceShotCamera/files/1508609370.jpg");
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bmm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
-//            byte[] imageAsByteArray = baos.toByteArray();
-//            String encodedImage = Base64.encodeToString(imageAsByteArray, Base64.DEFAULT);
-//            Log.w("BSAE64_TAAAAAAG", encodedImage);
+
 
 //            new ProcessImageDetails().execute("hey");
 //            new ProcessImageDetails().execute(bitmap1);
