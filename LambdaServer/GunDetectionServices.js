@@ -1,6 +1,7 @@
 var firebase = require('firebase');
 var axios = require('axios');
-const DETECTION_INTERVAL = 3600;
+const SmsService = require('./smsService')
+const DETECTION_INTERVAL = 600000; // 10 mins
 const config = {
     apiKey: "AIzaSyCwQpL7RWnl9yYU48VNGObXms4O7TUmUzw",
     authDomain: "gundetection.firebaseapp.com",
@@ -16,8 +17,7 @@ class GunDetectionServices {
         }
     }
     getPastGunDection(uuid, timestamp) {
-        var pastRef = firebase.database().ref('/past/' + uuid + '/lastAlarmTimestamp');
-        return pastRef.once('value').then(function(snapshot) {
+        return firebase.database().ref('/past/' + uuid + '/lastAlarmTimestamp').once('value').then(function(snapshot) {
             var datetime = snapshot.val().datetime;
             if (timestamp - datetime <= DETECTION_INTERVAL) {
                 return true;
@@ -29,7 +29,7 @@ class GunDetectionServices {
         });
     }
     analyzeImage(text) {
-        console.log(text);
+        //console.log(text);
         return axios({
             method: 'POST',
             url: 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBJ3xU8C6KCSG-8zcAVXwfUEigT0oEEtFc',
@@ -60,17 +60,19 @@ class GunDetectionServices {
     analyzeGCP(response) {
         var labels = response.data.responses[0].labelAnnotations;
         return labels.some((label) => {
-            return label.description === 'gun';
+            return label.description.includes('gun') || label.description.includes('firearm');
         }); 
     }
     detectGun(uuid, timestamp, lat, lon, encoded_image) {
         console.log(uuid);
+        console.log(encoded_image);
         return this.getPastGunDection(uuid, timestamp)
-        .then((detected) => {
-            if (true) {
+        .then((passDectection) => {
+            if (!passDectection) {
+                console.log("no past detection");
                 return this.analyzeImage(encoded_image)
                 .then((response) => {
-                    console.log(response);
+                    //console.log(response);
                     if (this.analyzeGCP(response)){
                         console.log('gun detected');
                         var pastRef = firebase.database().ref('/past/' + uuid + '/lastAlarmTimestamp');
@@ -80,8 +82,12 @@ class GunDetectionServices {
                             console.log('update failed', err);
                         });
                         return true;
+                    } else {
+                        return false;
                     }
                 })
+            } else {
+                return false;
             }
         }).catch(function (err) {
             console.log('detect gun failed', err);

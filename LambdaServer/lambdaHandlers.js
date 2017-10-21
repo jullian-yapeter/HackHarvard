@@ -26,14 +26,23 @@ const responses = {
 module.exports = {
     gunDetect : (event, context, callback) => {
         context.callbackWaitsForEmptyEventLoop = false;
-        console.log(event);
-        var requestBody = JSON.parse(JSON.stringify(event)).body;
-        var bodyJson = requestBody.split('&').reduce((json, data) => {
-            var [key, val] = data.split('=');
-            json[key] = val;
-            return json;
-        }, {});
-        console.log(bodyJson);
+        //console.log(event);
+        var requestData = JSON.parse(JSON.stringify(event));
+        var requestBody = requestData.body;
+        console.log('request body' + requestBody);
+        if (!requestData.headers['User-Agent'].includes('okhttp')) {
+            console.log('11111111');
+            var bodyJson = requestBody.split('&').reduce((json, data) => {
+                var [key, val] = data.split('=');
+                json[key] = val;
+                return json;
+            }, {});
+        } else {
+            console.log('22222222');
+            var bodyJson = JSON.parse(requestBody);
+            bodyJson.encoded_image = unescape(bodyJson.encoded_image);
+        }
+        console.log('body json' + bodyJson);
         const gunDetectionServices = new GunDetectionServices();
         gunDetectionServices.detectGun(
             bodyJson.uuid,
@@ -44,7 +53,7 @@ module.exports = {
         ).then((info) => {
             callback(null, responses.success(info))
         }).catch(error => {
-            callback(null, responses.error(error))
+            callback(null, responses.success(error))
         });
     }
 }
