@@ -1,0 +1,11 @@
+{
+  "name": "hack-harvard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/suzyng83209/HackHarvard.git",
+  "author": "suzyng83209 <suzyn.one@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
