@@ -25,6 +25,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -40,6 +42,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.location.LocationManager;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
@@ -50,6 +53,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -60,6 +64,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -234,7 +239,7 @@ public class BasicCameraFragment extends Fragment
     /**
      * This is the output file for our picture.
      */
-    private File mFile;
+//    private File mFile;
 
     /**
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
@@ -245,7 +250,7 @@ public class BasicCameraFragment extends Fragment
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+//            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
         }
 
     };
@@ -463,24 +468,21 @@ public class BasicCameraFragment extends Fragment
     }
 
     private void requestCameraPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
-        } else {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
+        requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                ErrorDialog.newInstance(getString(R.string.request_permission))
-                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+//        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+//            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//                ErrorDialog.newInstance(getString(R.string.request_permission))
+//                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+//            }
+//        } else {
+//            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -812,7 +814,10 @@ public class BasicCameraFragment extends Fragment
      */
     private void captureStillPicture() {
         try {
-            mFile = new File(getActivity().getExternalFilesDir(null), System.currentTimeMillis()+".jpg");
+//            Long tsLong = System.currentTimeMillis()/1000;
+//            String timeStampStr = tsLong.toString();
+
+//            mFile = new File(getActivity().getExternalFilesDir(null), timeStampStr+".jpg");
             final Activity activity = getActivity();
             if (null == activity || null == mCameraDevice) {
                 return;
@@ -838,8 +843,8 @@ public class BasicCameraFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    Log.w("SAVED_IMAGE_TAG", "Saved: " + mFile);
-                    Log.d(TAG, mFile.toString());
+//                    Log.w("SAVED_IMAGE_TAG", "Saved: " + mFile);
+//                    Log.d(TAG, mFile.toString());
                     unlockFocus();
 
                     if (continueCaptureLoop){
@@ -891,6 +896,7 @@ public class BasicCameraFragment extends Fragment
         }
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -933,36 +939,81 @@ public class BasicCameraFragment extends Fragment
         /**
          * The file we save the image into.
          */
-        private final File mFile;
+//        private final File mFile;
 
         ImageSaver(Image image, File file) {
             mImage = image;
-            mFile = file;
+//            mFile = file;
         }
 
         @Override
         public void run() {
+//            String fileName = mFile.getName();
+
+            Long tsLong = System.currentTimeMillis()/1000;
+            String timeStampStr = tsLong.toString();
+
+            ProcessImageDetails pid = new ProcessImageDetails();
+            pid.timeStamp = timeStampStr;
+//            pid.timeStamp = fileName.substring(0, fileName.length()-4);
+
+//            Bitmap bitmap = null;
+//            // save bitmap to cache directory
+//            try {
+//
+//                cachePath.mkdirs(); // don't forget to make the directory
+//                FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+//                bitmap = BitmapFactory.decodeFile(cachePath+"/image.png");
+//                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                stream.close();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+
+
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
-            FileOutputStream output = null;
-            try {
-                output = new FileOutputStream(mFile);
-                output.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                mImage.close();
-                if (null != output) {
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+            Bitmap bitmap1 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            mImage.close();
+            pid.bitmap = bitmap1;
+            pid.setImageData();
 
+//            Bitmap bmm = BitmapFactory.decodeFile("/storage/emulated/0/Android/data/com.tash_had.android.surveillanceShotCamera/files/1508609370.jpg");
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bmm.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+//            byte[] imageAsByteArray = baos.toByteArray();
+//            String encodedImage = Base64.encodeToString(imageAsByteArray, Base64.DEFAULT);
+//            Log.w("BSAE64_TAAAAAAG", encodedImage);
+
+//            new ProcessImageDetails().execute("hey");
+//            new ProcessImageDetails().execute(bitmap1);
+
+//            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+//            byte[] bytes = new byte[buffer.remaining()];
+//            buffer.get(bytes);
+//            FileOutputStream output = null;
+//            try {
+//                output = new FileOutputStream(mFile);
+//                output.write(bytes);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                mImage.close();
+//                if (null != output) {
+//                    try {
+//                        output.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            pid.setImageWithFile(mFile.getAbsolutePath());
+//            pid.setImageData();
+//            new ProcessImageDetails().execute(mFile.getPath());
+        }
     }
 
     /**
@@ -1011,36 +1062,5 @@ public class BasicCameraFragment extends Fragment
 
     }
 
-    /**
-     * Shows OK/Cancel confirmation dialog about camera permission.
-     */
-    public static class ConfirmationDialog extends DialogFragment {
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.request_permission)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            parent.requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                    REQUEST_CAMERA_PERMISSION);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Activity activity = parent.getActivity();
-                                    if (activity != null) {
-                                        activity.finish();
-                                    }
-                                }
-                            })
-                    .create();
-        }
-    }
 
 }
