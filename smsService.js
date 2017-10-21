@@ -26,15 +26,29 @@ function text(data, imgUrls) {
         throw new Error('Invalid img url parameter format');
     }
 
-    var message = `Warning! There was a potentially armed hostile individual spotted at ${data.location} at ${data.date}.`;
+    function reverseGeocode(latlng) {
+        // latlng in the form lat,lng
+        return axios
+            .get(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng}&key=${API_KEY}`
+            )
+            .then(response => {
+                return response.results[0].formatted_address;
+            });
+    }
 
-    return client.messages
-        .create({
-            body: message,
-            mediaUrl: imgUrls,
-            // to: receiver,
-            from: sender
+    return reverseGeocode(data.latlng)
+        .then(address => {
+            return `Warning! There was a potentially armed hostile individual spotted at ${address} at ${data.date}.`;
         })
+        .then(message =>
+            client.messages.create({
+                body: message,
+                mediaUrl: imgUrls,
+                // to: receiver,
+                from: sender
+            })
+        )
         .then(
             function({ body, dateCreated }) {
                 return body;
