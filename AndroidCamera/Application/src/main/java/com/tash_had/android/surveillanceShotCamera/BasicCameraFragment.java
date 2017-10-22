@@ -513,10 +513,16 @@ public class BasicCameraFragment extends Fragment
                 }
 
                 // For still image captures, we use the largest available size.
-                Size largest = Collections.max(
-                        Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
-                        new CompareSizesByArea());
-                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
+                Log.w("# OF IMAGE_FORMATS_TAG", Integer.toString(map.getOutputSizes(ImageFormat.JPEG).length));
+
+//                Size largest = Collections.max
+//                        (
+//                        Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
+//                        new CompareSizesByArea());
+                Size sizeOfRender = new Size(1920, 1080);
+//                Size fasterFrames = new Size(1280, 720);
+
+                mImageReader = ImageReader.newInstance(sizeOfRender.getWidth(), sizeOfRender.getHeight(),
                         ImageFormat.JPEG, /*maxImages*/2);
                 mImageReader.setOnImageAvailableListener(
                         mOnImageAvailableListener, mBackgroundHandler);
@@ -571,7 +577,7 @@ public class BasicCameraFragment extends Fragment
                 // garbage capture data.
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
-                        maxPreviewHeight, largest);
+                        maxPreviewHeight, sizeOfRender);
 
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = getResources().getConfiguration().orientation;
@@ -941,10 +947,10 @@ public class BasicCameraFragment extends Fragment
          */
 //        private final File mFile;
 
-        ImageSaver(Image image, File file) {
-            mImage = image;
-//            mFile = file;
-        }
+//        ImageSaver(Image image, File file) {
+//            mImage = image;
+////            mFile = file;
+//        }
         ImageSaver(Image image){
             mImage = image;
         }
@@ -983,7 +989,7 @@ public class BasicCameraFragment extends Fragment
 //            String encodedImage = Base64.encodeToString(imageAsByteArray, Base64.NO_WRAP);
 //            Log.w("BSAE64_TAAAAAAG", encodedImage);
 
-
+            ProcessImageDetails.renderImage(mImage);
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
@@ -991,7 +997,11 @@ public class BasicCameraFragment extends Fragment
             mImage.close();
             pid.bitmap = bitmap1;
             pid.setImageData();
-
+//            try {
+//                TimeUnit.SECONDS.sleep(1);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
 
 //            new ProcessImageDetails().execute("hey");
