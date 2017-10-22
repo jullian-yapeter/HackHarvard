@@ -4,14 +4,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,7 +33,7 @@ class ProcessImageDetails {
 
     public ProcessImageDetails(){
         super();
-        context = Config.cameraActivity.getApplicationContext();
+        context = GlobalVariables.cameraActivity.getApplicationContext();
         setLatLon();
     }
 
@@ -44,7 +42,7 @@ class ProcessImageDetails {
         imageDetailsMap.put("lat", lat);
         imageDetailsMap.put("lon", lon);
 
-//        this.bitmap = Bitmap.createScaledBitmap(this.bitmap, 360, 480, false);
+        this.bitmap = Bitmap.createScaledBitmap(this.bitmap, 360, 480, false);
         try{
             new EncodeImage().execute(this.bitmap);
         }catch (OutOfMemoryError e){
