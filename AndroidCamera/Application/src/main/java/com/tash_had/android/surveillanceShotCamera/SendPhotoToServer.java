@@ -43,7 +43,7 @@ public class SendPhotoToServer {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        new makePostRequest().execute(URL, jsonObject.toString());
+//        new makePostRequest().execute(URL, jsonObject.toString());
         Log.w("JSON_TAG", jsonObject.toString());
     }
 
