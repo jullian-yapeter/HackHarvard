@@ -108,7 +108,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/gun-detection-services/dev/1508639342156-2017-10-22T02:29:02.156Z/gun-detection-services.zip"
+                "S3Key": "serverless/gun-detection-services/dev/1508654524192-2017-10-22T06:42:04.192Z/gun-detection-services.zip"
               },
               "FunctionName": "gun-detection-services-dev-gunDetect",
               "Handler": "lambdaHandlers.gunDetect",
@@ -127,14 +127,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "GunDetectLambdaVersionvMaXOZJaVQ2YaoQYEeEgKw1cjMi1sscseKQ6V0Ea1iI": {
+          "GunDetectLambdaVersionVSw1SrucRyM0el2ksCtSntaUnTJLq8Ak5l3xskQpVpQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GunDetectLambdaFunction"
               },
-              "CodeSha256": "vMaXOZJaVQ2YaoQYEeEgKw1cjMi1sscseKQ6V0Ea1iI="
+              "CodeSha256": "VSw1SrucRyM0el2ksCtSntaUnTJLq8Ak5l3xskQpVpQ="
             }
           },
           "ApiGatewayRestApi": {
@@ -242,7 +242,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1508639342207": {
+          "ApiGatewayDeployment1508654524243": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -297,7 +297,7 @@
           "GunDetectLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GunDetectLambdaVersionvMaXOZJaVQ2YaoQYEeEgKw1cjMi1sscseKQ6V0Ea1iI"
+              "Ref": "GunDetectLambdaVersionVSw1SrucRyM0el2ksCtSntaUnTJLq8Ak5l3xskQpVpQ"
             }
           },
           "ServiceEndpoint": {
@@ -373,7 +373,7 @@
     "artifact": "/Users/tylerzhang/dev/gunDetector/HackHarvard/LambdaServer/.serverless/gun-detection-services.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/gun-detection-services/dev/1508639342156-2017-10-22T02:29:02.156Z",
+    "artifactDirectoryName": "serverless/gun-detection-services/dev/1508654524192-2017-10-22T06:42:04.192Z",
     "artifact": "gun-detection-services.zip"
   }
 }

@@ -49,10 +49,13 @@ module.exports = {
             bodyJson.lon,
             bodyJson.encoded_image
         ).then((info) => {
+            console.log(info);
             detected = info;
             if (!detected) {
                 return callback(null, responses.success(detected));
             }
+            return callback(null, responses.success(detected))
+        }).then(()=>{
             return twilio.generateMessage(bodyJson.lat, bodyJson.lon, new Date());
         }).then((msg)=>{
             console.log(msg);
