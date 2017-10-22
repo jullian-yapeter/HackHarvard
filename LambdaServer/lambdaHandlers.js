@@ -1,4 +1,6 @@
 const GunDetectionServices = require('./GunDetectionServices')
+var twilio = require('./TwilioService');
+var detected = false;
 
 const responseHeaders = {
     'Content-Type':'application/json',
@@ -29,20 +31,16 @@ module.exports = {
         //console.log(event);
         var requestData = JSON.parse(JSON.stringify(event));
         var requestBody = requestData.body;
-        console.log('request body' + requestBody);
         if (!requestData.headers['User-Agent'].includes('okhttp')) {
-            console.log('11111111');
             var bodyJson = requestBody.split('&').reduce((json, data) => {
                 var [key, val] = data.split('=');
                 json[key] = val;
                 return json;
             }, {});
         } else {
-            console.log('22222222');
             var bodyJson = JSON.parse(requestBody);
             bodyJson.encoded_image = unescape(bodyJson.encoded_image);
         }
-        console.log('body json' + bodyJson);
         const gunDetectionServices = new GunDetectionServices();
         gunDetectionServices.detectGun(
             bodyJson.uuid,
@@ -51,9 +49,19 @@ module.exports = {
             bodyJson.lon,
             bodyJson.encoded_image
         ).then((info) => {
-            callback(null, responses.success(info))
+            detected = info;
+            if (!detected) {
+                return callback(null, responses.success(detected));
+            }
+            return twilio.generateMessage(bodyJson.lat, bodyJson.lon, new Date());
+        }).then((msg)=>{
+            console.log(msg);
+            return twilio.text(msg);
+        }).then(()=>{
+            return callback(null, responses.success(detected));
         }).catch(error => {
-            callback(null, responses.success(error))
+            console.log('error', error);
+            return callback(null, responses.success(false))
         });
     }
 }

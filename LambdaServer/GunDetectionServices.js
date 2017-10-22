@@ -1,6 +1,5 @@
 var firebase = require('firebase');
 var axios = require('axios');
-const SmsService = require('./smsService')
 const DETECTION_INTERVAL = 600000; // 10 mins
 const config = {
     apiKey: "AIzaSyCwQpL7RWnl9yYU48VNGObXms4O7TUmUzw",
@@ -19,7 +18,7 @@ class GunDetectionServices {
     getPastGunDection(uuid, timestamp) {
         return firebase.database().ref('/past/' + uuid + '/lastAlarmTimestamp').once('value').then(function(snapshot) {
             var datetime = snapshot.val().datetime;
-            if (timestamp - datetime <= DETECTION_INTERVAL) {
+            if (parseInt(timestamp) - parseInt(datetime) <= DETECTION_INTERVAL) {
                 return true;
             } else {
                 return false;
@@ -72,11 +71,9 @@ class GunDetectionServices {
                 console.log("no past detection");
                 return this.analyzeImage(encoded_image)
                 .then((response) => {
-                    //console.log(response);
                     if (this.analyzeGCP(response)){
                         console.log('gun detected');
-                        var pastRef = firebase.database().ref('/past/' + uuid + '/lastAlarmTimestamp');
-                        pastRef.update({
+                        firebase.database().ref('/past/' + uuid + '/lastAlarmTimestamp').update({
                              'datetime': timestamp
                         }).catch(function (err) {
                             console.log('update failed', err);
