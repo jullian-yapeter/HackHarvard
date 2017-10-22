@@ -32,10 +32,10 @@ public class SendPhotoToServer {
 
     static void sendPhoto(HashMap<String, String> photoDetailsMap) throws IOException{
         client = new OkHttpClient();
-        String URL = "https://rb5fxsumi5.execute-api.us-west-2.amazonaws.com/dev/detect";
+        String URL = "https://ia8s1k2mhd.execute-api.us-west-2.amazonaws.com/dev/detect";
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("uuid", UUID.randomUUID());
+            jsonObject.put("uuid", Config.uuid);
             for (String key : photoDetailsMap.keySet()){
                 jsonObject.put(key, photoDetailsMap.get(key));
                 Log.w("JSON_OBJECT_TAG", key + " " + photoDetailsMap.get(key));

@@ -41,7 +41,7 @@ class ProcessImageDetails {
         imageDetailsMap.put("lat", lat);
         imageDetailsMap.put("lon", lon);
 
-        this.bitmap = Bitmap.createScaledBitmap(this.bitmap, 720, 1080, false);
+        this.bitmap = Bitmap.createScaledBitmap(this.bitmap, 360, 480, false);
         try{
             new EncodeImage().execute(this.bitmap);
         }catch (OutOfMemoryError e){
