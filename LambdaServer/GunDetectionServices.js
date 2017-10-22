@@ -90,7 +90,7 @@ class GunDetectionServices {
                         uuidRef.update({
                             datetime: timestamp,
                             coordinates: [lat, lon],
-                            url: fileFullName
+                            url: 'https://s3-us-west-2.amazonaws.com/shooter-image/' + fileFullName
                         }).then(()=>{
                             s3.upload(decodeURIComponent(encoded_image), fileFullName);
                         }).catch(err => console.error('update failed', err));

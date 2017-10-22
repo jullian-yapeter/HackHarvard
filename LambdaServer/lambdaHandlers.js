@@ -52,7 +52,8 @@ module.exports = {
             console.log(info);
             detected = info;
             if (!detected) {
-                return callback(null, responses.success(detected));
+                callback(null, responses.success(detected));
+                return;
             }
             return callback(null, responses.success(detected))
         }).then(()=>{
@@ -60,8 +61,6 @@ module.exports = {
         }).then((msg)=>{
             console.log(msg);
             return twilio.text(msg);
-        }).then(()=>{
-            return callback(null, responses.success(detected));
         }).catch(error => {
             console.log('error', error);
             return callback(null, responses.success(false))
